@@ -20,6 +20,8 @@ function App() {
   ]);
 
   const [taskName, setTaskName] = React.useState('');
+  const [editingTaskId, setEditingTaskId] = React.useState<number | null>(null);
+  const [editedTaskTitle, setEditedTaskTitle] = React.useState<string>('');
 
   const onAddTask = () => {
     setTasks([
@@ -30,6 +32,29 @@ function App() {
         isCompleted: false,
       },
     ]);
+    //after pressing 'Add' the Add Task input area should clear
+    setTaskName('');
+  };
+
+  const onEditTask = (task: Task) => {
+    setEditingTaskId(task.id);
+    setEditedTaskTitle(task.title);
+  };
+
+  const onSaveEditedTask = () => {
+    setTasks(
+      tasks.map((task) => {
+        if (task.id === editingTaskId) {
+          return { ...task, title: editedTaskTitle };
+        }
+        return task;
+      }),
+    );
+    setEditingTaskId(null);
+  };
+
+  const deleteTask = (task: Task) => {
+    setTasks(tasks.filter((keepTask) => keepTask.id !== task.id));
   };
 
   return (
@@ -44,7 +69,25 @@ function App() {
       <button onClick={onAddTask}>Add</button>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
+          <div key={task.id}>
+            {editingTaskId === task.id ? (
+              <>
+                <label htmlFor="editing-task">Edit Task: </label>
+                <input
+                  id="editing-task"
+                  value={editedTaskTitle}
+                  onChange={(e) => setEditedTaskTitle(e.target.value)}
+                />
+                <button onClick={onSaveEditedTask}>Save</button>
+              </>
+            ) : (
+              <>
+                <li>{task.title}</li>
+                <button onClick={() => onEditTask(task)}>Edit {task.id}</button>
+              </>
+            )}
+            <button onClick={() => deleteTask(task)}>Delete {task.id}</button>
+          </div>
         ))}
       </ul>
     </div>

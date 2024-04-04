@@ -28,4 +28,47 @@ describe('App', () => {
       expect(screen.getByText('New Task')).toBeInTheDocument();
     });
   });
+
+  test('should edit task when edit button is clicked', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const editButton = screen.getByText('Edit 1');
+
+    await user.click(editButton);
+
+    const input = screen.getByRole('textbox', { name: 'Edit Task:' });
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+
+    await user.type(input, ' Edited');
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Learn React Edited')).toBeInTheDocument();
+    });
+  });
+
+  test('should delete task when delete button is clicked', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const deleteButton = screen.getByText('Delete 1');
+
+    await user.click(deleteButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Task to delete')).not.toBeInTheDocument();
+    });
+  });
 });
+
+// const user = userEvent.setup();
+//     render(<App />);
+
+//     const deleteOption = screen.getByRole('button', {name: 'Delete'})
+
+//     await user.click(deleteOption);
+
+//     await waitFor(()=>{
+//       expect(screen.)
+//     })
